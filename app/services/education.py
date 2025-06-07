@@ -51,7 +51,17 @@ class CRUDGroup(CRUDBase[Group, GroupCreate, GroupUpdate]):
         """
         Получить группу со студентами
         """
-        return db.query(Group).options(joinedload(Group.students)).filter(Group.id == id).first()
+        group = (
+            db.query(Group)
+            .options(joinedload(Group.students).joinedload(StudentGroup.student))
+            .filter(Group.id == id)
+            .first()
+        )
+
+        if group:
+            group.__dict__["students"] = [sg.student for sg in group.students]
+
+        return group
     
     def get_with_all(self, db: Session, *, id: int) -> Optional[Group]:
         """
