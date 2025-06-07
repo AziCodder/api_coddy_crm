@@ -80,14 +80,14 @@ def read_group(
     Получить информацию о группе по ID
     """
     # Получаем группу с детальной информацией
-    group_details = group_service.get_with_details(db, id=group_id)
-    if not group_details:
+    group = group_service.get_with_details(db, id=group_id)
+    if not group:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Группа не найдена",
         )
-    
-    return group_details
+
+    return group
 
 
 @router.put("/{group_id}", response_model=GroupInDB)

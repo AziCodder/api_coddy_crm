@@ -86,28 +86,27 @@ class CRUDGroup(CRUDBase[Group, GroupCreate, GroupUpdate]):
         """
         return db.query(Group).filter(Group.is_active == True).offset(skip).limit(limit).all()
     
-    def get_with_details(self, db: Session, *, id: int) -> Optional[Dict[str, Any]]:
+    def get_with_details(self, db: Session, *, id: int) -> Optional[Group]:
         """
-        Получить группу с детальной информацией
+        Получить группу с детальной информацией и подсчетом количества студентов
         """
         group = self.get_with_all(db, id=id)
         if not group:
             return None
-        
-        # Подсчет количества студентов
+
+        # Подсчет количества активных студентов в группе
         students_count = (
             db.query(func.count(StudentGroup.student_id))
             .filter(
                 StudentGroup.group_id == id,
-                StudentGroup.is_active == True
+                StudentGroup.is_active == True,
             )
             .scalar()
         )
-        
-        return {
-            "group": group,
-            "students_count": students_count
-        }
+
+        # Дополняем объект группы атрибутом students_count
+        setattr(group, "students_count", students_count)
+        return group
     
     def add_student(
         self, db: Session, *, group_id: int, student_id: int, is_active: bool = True
