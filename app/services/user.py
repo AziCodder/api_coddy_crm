@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.services.base import CRUDBase
 from app.models.user import User, Role, RoleEnum
-from app.schemas.user import UserCreate, UserUpdate
+from app.schemas.user import UserCreate, UserUpdate, RoleCreate, RoleUpdate
 from app.core.security import get_password_hash
 
 
@@ -106,7 +106,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         )
 
 
-class CRUDRole(CRUDBase[Role, UserCreate, UserUpdate]):
+class CRUDRole(CRUDBase[Role, RoleCreate, RoleUpdate]):
     """
     CRUD для ролей с дополнительными методами
     """
